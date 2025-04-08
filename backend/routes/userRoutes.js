@@ -1,0 +1,101 @@
+const express = require('express');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const authenticateToken = require('../middleware/authenticateToken');
+
+const router = express.Router();
+
+// Login route
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: "Données invalides" });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({ message: "Connexion réussie !", token });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error });
+  }
+});
+
+// Register route
+router.post('/register', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const alreadySignUp = await User.findOne({ email });
+    if (alreadySignUp) {
+      return res.status(401).json({ message: "already sign up" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ email, password: hashedPassword }); // Fixed: Ensure `new` keyword is used
+    await newUser.save();
+    res.status(201).json({ message: "saved", success: true });
+  } catch (error) {
+    console.error("Error during registration:", error); // Log the error for debugging
+    res.status(500).json({ message: "Erreur serveur", error: error.message });
+  }
+});
+
+// Get all users
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error });
+  }
+});
+
+// Get a single user by ID
+router.get('/:id', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error });
+  }
+});
+
+// Update a user by ID
+router.put('/:id', authenticateToken, async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { email, ...(hashedPassword && { password: hashedPassword }) },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+    res.status(200).json({ message: "Utilisateur mis à jour", updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error });
+  }
+});
+
+// Delete a user by ID
+router.delete('/:id', authenticateToken, async (req, res) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+    res.status(200).json({ message: "Utilisateur supprimé", deletedUser });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error });
+  }
+});
+
+module.exports = router;
