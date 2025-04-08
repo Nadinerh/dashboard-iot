@@ -1,0 +1,17 @@
+
+@import 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css';
+.welcome-bg {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 80px;
+    transition: background 1s ease-in-out;
+  }
+  
+  .welcome-content {
+    max-width: 600px;
+    margin: auto;
+  }
+  
