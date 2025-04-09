@@ -15,7 +15,7 @@ http://localhost:5000/api
 
 ### 1. Login
 **Endpoint**: `POST /users/login`  
-**Description**: Authenticate a user and return a JWT token.  
+**Description**: Authenticate a user and return a JWT token.   
 **Request Body**:
 ```json
 {

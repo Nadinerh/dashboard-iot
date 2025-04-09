@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import {
   LineChart,
@@ -11,8 +11,10 @@ import {
   Legend,
 } from "recharts";
 import './Dashboard.css';
+import {useNavigate}  from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const devices = [
     { name: "Capteur Température DHT11", status: "Actif", traffic: "Normal" },
     { name: "Caméra IP", status: "Actif", traffic: "Élevé" },
@@ -28,7 +30,11 @@ const Dashboard = () => {
     { name: "18:00", traffic: 270 },
     { name: "20:00", traffic: 150 },
   ];
-
+  useEffect(() => {
+    if (localStorage.getItem("token") === null) {
+      navigate("/login");
+    }
+  }, []);
   return (
     <div className="dashboard-page py-5 custom-background">
       <Container>

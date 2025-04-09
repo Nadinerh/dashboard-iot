@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 import './Login.css';
@@ -14,16 +14,19 @@ const Login = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+  
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/login", {
+      const response=await axios.post("http://localhost:5000/api/users/login", {
         email,
         password,
       });
+      
 
       // Si la réponse est bonne
       console.log("Login réussi :", response.data);
+      localStorage.setItem("token", response.data.token); // Stocker le token dans le localStorage
       navigate("/dashboard");
     } catch (err) {
       console.error("Erreur de connexion :", err);

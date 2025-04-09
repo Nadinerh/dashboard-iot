@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/auth'); // ✅ Ajouté
 
 dotenv.config();
 
@@ -17,7 +18,10 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log("MongoDB connecté"))
 .catch(err => console.error("Erreur MongoDB:", err));
 
-// Routes
+// ✅ Ajout de la route d'authentification
+app.use('/api', authRoutes);
+
+// Routes utilisateurs
 app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 5000;
