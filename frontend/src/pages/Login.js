@@ -14,7 +14,6 @@ const Login = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  
 
   const handleLogin = async () => {
     try {
@@ -22,7 +21,6 @@ const Login = () => {
         email,
         password,
       });
-      
 
       // Si la réponse est bonne
       console.log("Login réussi :", response.data);
