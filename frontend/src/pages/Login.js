@@ -18,11 +18,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-<<<<<<< HEAD
       const response = await axios.post("https://dashboard-iot-nd3u.onrender.com/api/login", {
-=======
-      const response=await axios.post("http://localhost:5000/api/users/login", {
->>>>>>> 1f4ef6ab55ea06f8f3248f1cb88dbd525c523e8f
         email,
         password,
       });
