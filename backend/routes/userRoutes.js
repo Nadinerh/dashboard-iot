@@ -8,19 +8,23 @@ const router = express.Router();
 
 // Login route
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
   try {
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ message: "Données invalides" });
+      return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(200).json({ message: "Connexion réussie !", token });
-  } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error });
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' } // Increased to 24 hours
+    );
+
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur', error: err.message });
   }
 });
 

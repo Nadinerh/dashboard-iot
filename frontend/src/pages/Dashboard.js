@@ -26,34 +26,46 @@ const Dashboard = () => {
   ];
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
 
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
-    // 🔁 Fonction pour récupérer les données capteurs toutes les 5 sec
-    const fetchData = () => {
-      axios.get("https://localhost:5000/api/donnees", {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true
-      })
-      .then((res) => setDonnees(res.data))
-      .catch((err) => console.error("Erreur API /donnees :", err));
+      try {
+        // Vérification de l'URL de l'API
+        const apiUrl = "http://localhost:5000/api/donnees";
+
+        // Appel immédiat des données capteurs
+        const resDonnees = await axios.get(apiUrl, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+        setDonnees(resDonnees.data);
+        // Vérification de la réponse de l'API
+        console.log("Données capteurs :", resDonnees.data);
+        // Appel immédiat des données de trafic
+        const resTraffic = await axios.get("http://localhost:5000/api/stats/hourly", {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+        // Vérification de la réponse de l'API
+        console.log("Données de trafic :", resTraffic.data);
+        setTrafficData(resTraffic.data);
+      } catch (err) {
+        console.error("Erreur API :", err);
+        if (err.code === "ERR_NETWORK") {
+          console.error("Vérifiez que le backend est en cours d'exécution et accessible.");
+        }
+      }
     };
 
-    // Appel immédiat + intervalle
     fetchData();
-    const interval = setInterval(fetchData, 5000);
 
-    // Appel données de trafic
-    axios.get("https://localhost:5000/api/stats/hourly", {
-      headers: { Authorization: `Bearer ${token}` },
-      withCredentials: true
-    })
-    .then((res) => setTrafficData(res.data))
-    .catch((err) => console.error("Erreur API /stats/hourly :", err));
+    // Intervalle pour récupérer les données capteurs toutes les 5 sec
+    const interval = setInterval(fetchData, 5000);
 
     return () => clearInterval(interval);
   }, []);
