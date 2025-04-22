@@ -17,7 +17,6 @@ const Login = () => {
       });
 
       // Si la réponse est bonne
-      console.log("Login réussi :", response.data);
       localStorage.setItem("token", response.data.token); // Stocker le token dans le localStorage
       navigate("/dashboard");
     } catch (err) {
