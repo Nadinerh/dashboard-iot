@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
   origin: 'http://localhost:3000', // Autoriser uniquement le frontend local
-  credentials: true,
+  credentials: true, // Autoriser les cookies et les en-têtes d'authentification
 }));
 app.use(express.json());
 
@@ -46,7 +46,7 @@ mongoose.connection.on('error', (err) => {
 require("./mqtt-handler"); // ⬅️ pour lancer l’écoute MQTT(ajouté)
 app.use('/api/users', userRoutes);
 
-app.use('/api/donnees', donneeRoutes); // ajouté
+app.use('/api/donnees/all', donneeRoutes); // ajouté
 
 app.use('/api/stats', statsRoutes); //ajouté
 

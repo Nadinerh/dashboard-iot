@@ -36,7 +36,7 @@ const Dashboard = () => {
 
       try {
         // Vérification de l'URL de l'API
-        const apiUrl = "http://localhost:5000/api/donnees";
+        const apiUrl = "http://localhost:5000/api/donnees/all";
 
         // Appel immédiat des données capteurs
         const resDonnees = await axios.get(apiUrl, {
