@@ -24,6 +24,20 @@ const Dashboard = () => {
     { name: "Caméra IP", status: "Actif", traffic: "Élevé" },
     { name: "ESP32 #1", status: "Inactif", traffic: "Aucun" },
   ];
+  function LogoutButton() {
+    const navigate = useNavigate();
+  
+    const handleLogout = () => {
+      localStorage.removeItem("token");
+      navigate("/login");
+    };
+  
+    return (
+      <button onClick={handleLogout}>
+        Logout
+      </button>
+    );
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,6 +87,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-page py-5 custom-background">
       <Container>
+      <LogoutButton />
         <h1 className="text-center mb-4 text-primary fancy-title">Tableau de Bord</h1>
 
         <h3 className="mb-3 text-secondary">📈 Température et Humidité</h3>
