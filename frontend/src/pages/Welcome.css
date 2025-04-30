@@ -1,17 +1,93 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 @import 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css';
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* ✅ Fond avec image3.jpg (placer dans dossier public) */
 .welcome-bg {
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-top: 80px;
-    transition: background 1s ease-in-out;
+  background: url('/public/image3.jpg') no-repeat center center;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding-top: 150px
+}
+
+/* Bloc principal */
+.welcome-content {
+  margin-top: -100px;
+  animation-duration: 1.5s; /* durée animation animate.css */
+}
+
+/* Carte effet glass */
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 4rem 5rem; /* Plus d'espace intérieur */
+  width: 95%;         /* Prend presque toute la largeur */
+  max-width: 1400px;  /* Plus large que 1200px */
+  min-height: 500px;  /* Plus haut */
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.3); /* Ombre plus marquée */
+}
+
+
+
+/* Texte */
+.text-section {
+  max-width: 600px;
+}
+
+/* Titre dégradé */
+.gradient-text {
+  background: linear-gradient(45deg, #93c5fd, #e0f2fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Image à droite */
+.welcome-illustration {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Bouton */
+button.btn-success {
+  background-color: #10b981;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+button.btn-success:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .glass-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
-  
-  .welcome-content {
-    max-width: 600px;
-    margin: auto;
+
+  .text-section {
+    text-align: left;
   }
-  
+}
+
+

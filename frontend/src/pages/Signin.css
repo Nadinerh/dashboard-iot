@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css');
 
-.login-page {
+.signin-page {
   min-height: 100vh;
   background: url('/public/image3.jpg') no-repeat center center;
   background-size: cover;
@@ -12,18 +12,19 @@
   color: #fff;
 }
 
-.glass-card-login {
+.signin-card {
   background: transparent;
+  backdrop-filter: blur(12px);
   padding: 3rem 3rem;
+  border-radius: 20px;
+  max-width: 500px;  /* 🆙 élargissement */
   width: 100%;
-  max-width: 500px;  /* 🆙 comme signin */
   text-align: center;
   box-shadow: none;
 }
 
-.text-gradient {
+.signin-title {
   font-size: 2rem;
-  font-weight: 600;
   margin-bottom: 2rem;
   background: linear-gradient(45deg, #c084fc, #60a5fa);
   -webkit-background-clip: text;
@@ -34,15 +35,15 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid #fff;
-  padding: 0.6rem 0;
   margin-bottom: 1.5rem;
+  padding: 0.6rem 0;
   position: relative;
 }
 
 .input-icon i {
-  color: #fff;
-  font-size: 1.1rem;
+  color: #cbd5e1;
   margin-right: 0.8rem;
+  font-size: 1.1rem;
 }
 
 .input-icon input {
@@ -50,8 +51,8 @@
   border: none;
   outline: none;
   color: #fff;
-  font-size: 1.1rem;
   flex: 1;
+  font-size: 1.1rem;  /* 🆙 plus lisible */
   padding: 0.4rem 0;
 }
 
@@ -59,73 +60,49 @@
   color: #ccc;
 }
 
-.toggle-eye {
-  position: absolute;
-  right: 0;
-  cursor: pointer;
-  color: #ccc;
-  font-size: 1.1rem;
-}
-
-.btn-login {
-  width: 100%;
+.btn-signin {
   background: linear-gradient(to right, #d946ef, #9333ea);
+  border: none;
   color: #fff;
   padding: 1rem;
-  border: none;
   border-radius: 10px;
   font-weight: 600;
+  width: 100%;
   font-size: 1rem;
   margin-top: 0.5rem;
   transition: 0.3s ease;
 }
 
-.btn-login:hover {
+.btn-signin:hover {
   background: linear-gradient(to right, #e879f9, #a855f7);
   transform: scale(1.02);
 }
 
-.btn-register {
-  width: 100%;
-  background: transparent;
-  color: #fff;
-  padding: 1rem;
-  border: 1px solid #fff;
-  border-radius: 10px;
-  font-weight: 600;
-  margin-top: 1rem;
-  font-size: 1rem;
-  transition: 0.3s ease;
+.alert-error {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
 }
 
-.btn-register:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.extra-links {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-  font-size: 0.85rem;
-}
-
-.extra-links a {
+.link-login {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
   color: #c4b5fd;
+}
+
+.link-login a {
+  color: #a78bfa;
   text-decoration: none;
 }
 
-.extra-links a:hover {
+.link-login a:hover {
   text-decoration: underline;
 }
 
-.remember-me {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.login-avatar {
+.signin-avatar {
   width: 130px;
   height: 130px;
   object-fit: cover;
@@ -136,9 +113,6 @@
   transition: transform 0.3s ease;
 }
 
-.login-avatar:hover {
+.signin-avatar:hover {
   transform: scale(1.05);
 }
-
-
-

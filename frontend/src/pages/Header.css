@@ -1,0 +1,77 @@
+.glass-navbar {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 1.5rem;
+  height: 70px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img {
+  height: 85px;              
+  width: auto;              
+  object-fit: contain;       
+  background: transparent;  
+  box-shadow: none;         
+  border-radius: 0;         
+}
+
+
+.brand-full {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #c4b5fd;
+  transition: all 0.3s ease;
+}
+
+.brand-full:hover {
+  color: #a78bfa;
+  text-shadow: 0 0 8px rgba(199, 210, 254, 0.5);
+}
+
+.glass-navbar .nav-link {
+  color: #e2e8f0 !important;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.glass-navbar .nav-link:hover,
+.glass-navbar .nav-link.active {
+  color: #a5b4fc !important;
+}
+.signin-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  color: #c4b5fd !important;
+  transition: all 0.3s ease;
+}
+
+.signin-btn:hover {
+  background: rgba(165, 180, 252, 0.1);
+  color: #a78bfa !important;
+  box-shadow: 0 0 8px rgba(165, 180, 252, 0.3);
+}
+
+  
+  
+  
+  
+  
+  
