@@ -23,6 +23,20 @@ const Dashboard = () => {
   const devices = [
     { name: "Capteur Température DHT11", status: "Actif", traffic: "Normal" },
   ];
+  function LogoutButton() {
+    const navigate = useNavigate();
+  
+    const handleLogout = () => {
+      localStorage.removeItem("token");
+      navigate("/login");
+    };
+  
+    return (
+      <button onClick={handleLogout}>
+        Logout
+      </button>
+    );
+  }
 
   function LogoutButton() {
     const handleLogout = () => {
@@ -78,15 +92,20 @@ const Dashboard = () => {
   return (
     <div className="dashboard-page">
       <Container>
-        <h1 className="dashboard-title">Tableau de Bord</h1>
+        <LogoutButton />
+  
+        <h1 className="dashboard-title text-center mb-4 text-primary fancy-title">
+          Tableau de Bord
+        </h1>
+  
         <div className="section-header">
-        <h3 className="section-title">📈 Température et Humidité</h3>
-        <div className="device-button">
-          <i className="bi bi-cpu me-2"></i>
-          Capteur Température DHT11 — <strong>Actif</strong>
+          <h3 className="section-title">📈 Température et Humidité</h3>
+          <div className="device-button">
+            <i className="bi bi-cpu me-2"></i>
+            Capteur Température DHT11 — <strong>Actif</strong>
+          </div>
         </div>
-        </div>
-
+  
         <ResponsiveContainer width="100%" height={300} className="mb-5">
           <LineChart data={donnees.slice(-10)}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -102,21 +121,22 @@ const Dashboard = () => {
             <Line type="monotone" dataKey="hum" stroke="#1e90ff" name="Humidité (%)" />
           </LineChart>
         </ResponsiveContainer>
+  
         <div className="alert-block mb-4">
           <i className="bi bi-shield-exclamation"></i> {alerte}
         </div>
+  
         <h3 className="mb-3 text-secondary">📋 Dernières données reçues</h3>
         <ul className="list-group">
-        {donnees.slice(-20).reverse().map((d, i) => (
+          {donnees.slice(-20).reverse().map((d, i) => (
             <li key={i} className="list-group-item">
               <strong>{new Date(d.date).toLocaleString()}</strong> — 🌡 Temp: {d.temp}°C, 💧 Hum: {d.hum}%
             </li>
           ))}
         </ul>
-        <LogoutButton />
       </Container>
     </div>
-  );
+  );  
 };
 
 export default Dashboard;
