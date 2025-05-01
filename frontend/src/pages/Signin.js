@@ -9,19 +9,24 @@ const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [cle, setCle] = useState("");
 
-  const handleSignin = async () => {
+
+  const handleRegister = async () => {
     try {
-      const response = await axios.post("https://your-api.com/api/users/signin", {
+      const response = await axios.post("http://localhost:5000/api/users/register", {
         email,
         password,
+        cle,
       });
-      localStorage.setItem("token", response.data.token);
-      navigate("/dashboard");
+      alert("Inscription réussie !");
+      navigate("/login");
     } catch (err) {
-      setError("Erreur d'inscription");
+      setError(err.response?.data?.message || "Erreur d'inscription");
     }
   };
+  
+  
 
   return (
     <div className="signin-page">
@@ -50,9 +55,16 @@ const Signin = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-
-        <button className="btn-signin" onClick={handleSignin}>S'inscrire</button>
-
+        <div className="input-icon">
+          <i className="bi bi-key-fill"></i>
+  <       input
+            type="text"
+            placeholder="Clé d'inscription"
+            value={cle}
+            onChange={(e) => setCle(e.target.value)}
+          />
+        </div>
+        <button className="btn-signin" onClick={handleRegister}>S'inscrire</button>
         <div className="link-login">
           Vous avez déjà un compte ? <a href="/login">Se connecter</a>
         </div>

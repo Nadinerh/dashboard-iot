@@ -12,7 +12,7 @@ const Header = () => {
       <Container className="d-flex justify-content-between align-items-center">
         <Navbar.Brand as={Link} to="/" className="nav-logo d-flex align-items-center gap-2">
           <img
-            src="/cyber.png"
+            src="/cy.png"
             alt="Logo"
             className="logo-img"
           />

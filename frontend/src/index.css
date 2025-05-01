@@ -1,3 +1,5 @@
 body {
-  background-color: #f8f9fa;
+  margin: 0;
+  background: linear-gradient(to bottom, #0e0e2c, #1f1140); /* exemple violet foncé */
+  background-attachment: fixed;
 }

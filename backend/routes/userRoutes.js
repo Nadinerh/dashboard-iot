@@ -30,7 +30,15 @@ router.post('/login', async (req, res) => {
 
 // Register route
 router.post('/register', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, cle } = req.body;
+
+  // 🔒 Clé secrète définie dans .env ou codée ici (ex: "abc123")
+  const CLE_ATTENDUE = process.env.CLE_SECRETE || "s1e2c3r4e5t";
+
+  if (cle !== CLE_ATTENDUE) {
+    return res.status(403).json({ message: "Clé d'inscription invalide" });
+  }
+
   try {
     const alreadySignUp = await User.findOne({ email });
     if (alreadySignUp) {
@@ -38,11 +46,11 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword }); // Fixed: Ensure `new` keyword is used
+    const newUser = new User({ email, password: hashedPassword });
     await newUser.save();
     res.status(201).json({ message: "saved", success: true });
   } catch (error) {
-    console.error("Error during registration:", error); // Log the error for debugging
+    console.error("Error during registration:", error);
     res.status(500).json({ message: "Erreur serveur", error: error.message });
   }
 });
