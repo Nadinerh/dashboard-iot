@@ -14,7 +14,7 @@ const Login = () => {
     try {
       const response = await axios.post("https://dashboard-iot-nd3u.onrender.com/api/users/login", {
         email,
-        password,
+        password
       });
       localStorage.setItem("token", response.data.token);
       navigate("/dashboard");
@@ -56,11 +56,7 @@ const Login = () => {
         </div>
 
         <div className="extra-links">
-          <div className="remember-me">
-            <input type="checkbox" />
-            <label>Remember me</label>
-          </div>
-          <a href="#">Forgot Password?</a>
+          <a onClick={() => navigate("/forgot-password")}>Forgot Password?</a>
         </div>
 
         <button className="btn-login" onClick={handleLogin}>LOGIN</button>
@@ -71,5 +67,6 @@ const Login = () => {
 };
 
 export default Login;
+
 
 

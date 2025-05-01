@@ -3,8 +3,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const authenticateToken = require('../middleware/authenticateToken');
-
 const router = express.Router();
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 // Login route
 router.post('/login', async (req, res) => {
@@ -107,6 +108,68 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     res.status(200).json({ message: "Utilisateur supprimé", deletedUser });
   } catch (error) {
     res.status(500).json({ message: "Erreur serveur", error });
+  }
+});
+
+
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
+    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+    const token = crypto.randomBytes(32).toString("hex");
+    user.resetToken = token;
+    user.resetTokenExpiration = Date.now() + 3600000;
+    await user.save();
+
+    const resetLink = `http://localhost:3000/reset-password/${token}`;
+    console.log("🔗 Lien de réinitialisation :", resetLink);
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      }
+    });
+
+    await transporter.sendMail({
+      to: user.email,
+      subject: "Réinitialisation de mot de passe",
+      html: `<p>Clique ici pour changer ton mot de passe :</p><a href="${resetLink}">${resetLink}</a>`
+    });
+
+    res.status(200).json({ message: "Email envoyé." });
+  } catch (err) {
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
+  }
+});
+router.post("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+  const { password, cle } = req.body;
+
+  const CLE_ATTENDUE = process.env.CLE_SECRETE || "s1e2c3r4e5t";
+  if (cle !== CLE_ATTENDUE) {
+    return res.status(403).json({ message: "Clé secrète invalide" });
+  }
+
+  try {
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiration: { $gt: Date.now() }
+    });
+
+    if (!user) return res.status(400).json({ message: "Lien invalide ou expiré" });
+
+    user.password = await bcrypt.hash(password, 10);
+    user.resetToken = undefined;
+    user.resetTokenExpiration = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Mot de passe mis à jour" });
+  } catch (err) {
+    res.status(500).json({ message: "Erreur serveur", error: err.message });
   }
 });
 

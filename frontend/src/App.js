@@ -7,7 +7,9 @@ import Dashboard from "./pages/Dashboard.js";
 import Header from "./pages/Header";
 import Signout from "./pages/Signout.js";
 import Signin from "./pages/Signin.js";
- // 🆕
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/resetPassword.js";
+
 
 
 const App = () => {
@@ -21,6 +23,8 @@ const App = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/signout" element={<Signout />} />
           <Route path="/signin" element={<Signin />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         </Routes>
       </Router>
