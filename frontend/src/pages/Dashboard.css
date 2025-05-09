@@ -184,3 +184,52 @@
   right: 20px;
   z-index: 1000;
 }
+
+.encryption-status-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.status-indicator {
+  font-size: 1.1em;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.encrypted-files-list {
+  margin-top: 15px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.file-item.decrypted {
+  border-left: 4px solid #4CAF50;
+}
+
+.file-item.pending {
+  border-left: 4px solid #FFC107;
+}
+
+.file-item .timestamp {
+  font-size: 0.9em;
+  color: #ddd;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 1.2em;
+}

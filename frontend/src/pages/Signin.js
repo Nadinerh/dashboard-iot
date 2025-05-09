@@ -11,10 +11,9 @@ const Signin = () => {
   const [error, setError] = useState("");
   const [cle, setCle] = useState("");
 
-
   const handleRegister = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/users/register", {
+      await axios.post(`${process.env.REACT_APP_BACKEND_IP}/api/users/register`, {
         email,
         password,
         cle,
@@ -25,8 +24,6 @@ const Signin = () => {
       setError(err.response?.data?.message || "Erreur d'inscription");
     }
   };
-  
-  
 
   return (
     <div className="signin-page">
@@ -55,16 +52,19 @@ const Signin = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+
         <div className="input-icon">
           <i className="bi bi-key-fill"></i>
-  <       input
+          <input
             type="text"
             placeholder="Clé d'inscription"
             value={cle}
             onChange={(e) => setCle(e.target.value)}
           />
         </div>
+
         <button className="btn-signin" onClick={handleRegister}>S'inscrire</button>
+
         <div className="link-login">
           Vous avez déjà un compte ? <a href="/login">Se connecter</a>
         </div>
@@ -74,3 +74,4 @@ const Signin = () => {
 };
 
 export default Signin;
+

@@ -12,11 +12,11 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("https://dashboard-iot-nd3u.onrender.com/api/users/login", {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_IP}/api/users/login`, {
         email,
         password
       });
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", response.data.token); // ✅ Utilisation de la réponse
       navigate("/dashboard");
     } catch (err) {
       console.error("Erreur de connexion :", err);
@@ -67,6 +67,7 @@ const Login = () => {
 };
 
 export default Login;
+
 
 
 

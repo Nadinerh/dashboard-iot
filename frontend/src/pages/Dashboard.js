@@ -19,6 +19,8 @@ const Dashboard = () => {
   const [donnees, setDonnees] = useState([]);
   const [trafficData, setTrafficData] = useState([]);
   const [alerte, setAlerte] = useState("Aucune alerte détectée");
+  const [encryptedData, setEncryptedData] = useState([]);
+  const [decryptionStatus, setDecryptionStatus] = useState("Aucun fichier");
 
   const devices = [
     { name: "Capteur Température DHT11", status: "Actif", traffic: "Normal" },
@@ -62,7 +64,7 @@ const Dashboard = () => {
       }
 
       try {
-        const apiUrl = "http://localhost:5000/api/donnees/all";
+        const apiUrl = `${process.env.REACT_APP_BACKEND_IP}/api/donnees/all`;
         const resDonnees = await axios.get(apiUrl, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
@@ -84,8 +86,47 @@ const Dashboard = () => {
       }
     };
 
+    const fetchAllData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        // Fetch sensor data
+        const donneeResponse = await axios.get(`${process.env.REACT_APP_BACKEND_IP}/api/donnees/all`, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+        setDonnees(donneeResponse.data);
+
+        // Fetch encrypted data status
+        const encryptedResponse = await axios.get(`${process.env.REACT_APP_BACKEND_IP}/api/upload/status`, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+        setEncryptedData(encryptedResponse.data);
+        
+        // Update decryption status
+        const lastFile = encryptedResponse.data[0];
+        if (lastFile) {
+          setDecryptionStatus(lastFile.status === 'decrypted' 
+            ? "✅ Dernières données déchiffrées avec succès" 
+            : "⚠️ En attente de déchiffrement");
+        }
+
+      } catch (err) {
+        console.error("Erreur API:", err);
+      }
+    };
+
     fetchData();
-    const interval = setInterval(fetchData, 5000);
+    fetchAllData();
+    const interval = setInterval(() => {
+      fetchData();
+      fetchAllData();
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -124,6 +165,27 @@ const Dashboard = () => {
   
         <div className="alert-block mb-4">
           <i className="bi bi-shield-exclamation"></i> {alerte}
+        </div>
+
+        <div className="encryption-status-card mb-4">
+          <h3 className="section-title">
+            <i className="bi bi-shield-lock"></i> État du Chiffrement
+          </h3>
+          <div className="status-indicator">
+            {decryptionStatus}
+          </div>
+          <div className="encrypted-files-list">
+            {encryptedData.slice(0, 5).map((file, index) => (
+              <div key={index} className={`file-item ${file.status}`}>
+                <span className="timestamp">
+                  {new Date(file.timestamp).toLocaleString()}
+                </span>
+                <span className="status-badge">
+                  {file.status === 'decrypted' ? '✅' : '⏳'}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
   
         <h3 className="mb-3 text-secondary">📋 Dernières données reçues</h3>

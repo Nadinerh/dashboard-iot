@@ -8,7 +8,7 @@ const ForgotPassword = () => {
 
   const handleSubmit = async () => {
     try {
-      await axios.post("http://localhost:5000/api/users/forgot-password", {
+      await axios.post(`${process.env.REACT_APP_BACKEND_IP}/api/users/forgot-password`, {
         email: email.trim().toLowerCase(),
       });
       setMessage("📧 Lien envoyé à ton email !");
@@ -48,6 +48,7 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
+
 
 
 

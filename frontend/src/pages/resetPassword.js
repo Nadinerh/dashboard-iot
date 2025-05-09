@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./Login.css"; // ✅ on réutilise Login.css pour uniformité
+import "./Login.css"; // ✅ réutilisation du style existant
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -12,7 +12,7 @@ const ResetPassword = () => {
 
   const handleReset = async () => {
     try {
-      await axios.post(`http://localhost:5000/api/users/reset-password/${token}`, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_IP}/api/users/reset-password/${token}`, {
         password,
         cle,
       });
@@ -61,6 +61,7 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
+
 
 
 
