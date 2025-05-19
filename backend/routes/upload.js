@@ -3,8 +3,9 @@ const router = express.Router();
 const multer = require('multer');
 const path = require("path");
 const fs = require("fs").promises;
+const EncryptedData = require("../models/EncryptedData"); 
 const Donnee = require("../models/Donnee");
-const { decryptData } = require('../services/decryptionService'); // ✅ Déchiffrement centralisé
+const { decryptData } = require('../services/decryptionService');
 
 // Configuration du stockage multer
 const storage = multer.diskStorage({
@@ -26,42 +27,54 @@ router.post('/', upload.single('file'), async (req, res) => {
       return res.status(400).json({ message: 'Aucun fichier reçu' });
     }
 
-    console.log('📥 Fichier reçu:', req.file.path);
+    console.log('Fichier reçu:', req.file.path);
 
-    // Lire le contenu du fichier binaire
+    // Sauvegarder le fichier chiffré dans MongoDB
     const fileContent = await fs.readFile(req.file.path);
+    const encryptedDoc = await EncryptedData.create({
+      encryptedContent: fileContent.toString('base64'),
+      status: 'pending'
+    });
 
-    // Utiliser le service de déchiffrement
-    const decryptedBuffer = await decryptData(fileContent);
-    const decrypted = decryptedBuffer.toString('utf8');
+    // Déchiffrer et traiter
+    try {
+      const decryptedBuffer = await decryptData(fileContent);
+      const decrypted = decryptedBuffer.toString('utf8');
 
-    // Parser le CSV déchiffré
-    const lines = decrypted.split('\n').filter(Boolean);
-    const dataRows = lines.slice(1); // Supposer une en-tête
+      // Parser et sauvegarder les données
+      const lines = decrypted.split('\n').filter(Boolean);
+      const dataRows = lines.slice(1);
 
-    let count = 0;
-    for (const line of dataRows) {
-      const [timestamp, temp, hum] = line.split(',');
-      if (timestamp && temp && hum) {
+      for (const line of dataRows) {
+        const [timestamp, temp, hum] = line.split(',');
         await Donnee.create({
           temp: parseFloat(temp),
           hum: parseFloat(hum),
           date: new Date(timestamp)
         });
-        count++;
       }
+
+      // Mettre à jour le statut
+      encryptedDoc.status = 'decrypted';
+      encryptedDoc.decryptedContent = decrypted;
+      await encryptedDoc.save();
+
+    } catch (decryptError) {
+      encryptedDoc.status = 'error';
+      await encryptedDoc.save();
+      throw decryptError;
     }
 
-    // Supprimer le fichier temporaire
+    // Nettoyer le fichier temporaire
     await fs.unlink(req.file.path);
 
     res.status(200).json({
-      message: '✅ Données déchiffrées et sauvegardées',
-      rowsProcessed: count
+      message: 'Données traitées et sauvegardées dans MongoDB Atlas',
+      id: encryptedDoc._id
     });
 
   } catch (error) {
-    console.error('❌ Erreur:', error.message);
+    console.error('Erreur:', error.message);
     if (req.file) {
       await fs.unlink(req.file.path).catch(console.error);
     }
@@ -72,5 +85,19 @@ router.post('/', upload.single('file'), async (req, res) => {
   }
 });
 
+// Route pour vérifier le statut des fichiers
+router.get('/status', async (req, res) => {
+  try {
+    const files = await EncryptedData.find()
+      .sort({ timestamp: -1 })
+      .limit(10)
+      .select('timestamp status');
+    res.json(files);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
+
 

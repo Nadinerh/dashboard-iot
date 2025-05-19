@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./Login.css"; // ✅ réutilisation du style existant
+import "./Login.css"; 
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -16,11 +16,11 @@ const ResetPassword = () => {
         password,
         cle,
       });
-      alert("✅ Mot de passe mis à jour !");
+      alert("Mot de passe mis à jour !");
       navigate("/login");
     } catch (err) {
       console.error("Erreur :", err);
-      setError(err.response?.data?.message || "❌ Lien invalide ou clé incorrecte.");
+      setError(err.response?.data?.message || "Lien invalide ou clé incorrecte.");
     }
   };
 

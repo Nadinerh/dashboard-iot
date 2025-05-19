@@ -1,4 +1,3 @@
-// src/pages/Signin.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './Signin.css';
@@ -8,27 +7,44 @@ const Signin = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [cle, setCle] = useState("");
+  const [error, setError] = useState("");
 
   const handleRegister = async () => {
+    setError("");
+    if (!email || !password || !cle) {
+      setError("Veuillez remplir tous les champs.");
+      return;
+    }
+
     try {
-      await axios.post(`${process.env.REACT_APP_BACKEND_IP}/api/users/register`, {
-        email,
-        password,
-        cle,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_IP}/api/users/register`,
+        {
+          email,
+          password,
+          cle,
+        }
+      );
+
       alert("Inscription réussie !");
       navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Erreur d'inscription");
+      console.log("Erreur backend complète :", err);
+      if (err.response?.status === 403) {
+        setError("Clé d'inscription invalide");
+      } else {
+        const msg = err.response?.data?.message || "Erreur d'inscription";
+        setError(`${msg}`);
+      }
     }
+    
   };
 
   return (
     <div className="signin-page">
       <div className="signin-card">
-        <img src="/pl.png" alt="User Avatar" className="signin-avatar" /> 
+        <img src="/pl.png" alt="User Avatar" className="signin-avatar" />
         <h2 className="signin-title">Créer un compte</h2>
 
         {error && <div className="alert-error">{error}</div>}
@@ -63,7 +79,9 @@ const Signin = () => {
           />
         </div>
 
-        <button className="btn-signin" onClick={handleRegister}>S'inscrire</button>
+        <button className="btn-signin" onClick={handleRegister}>
+          S'inscrire
+        </button>
 
         <div className="link-login">
           Vous avez déjà un compte ? <a href="/login">Se connecter</a>
@@ -74,4 +92,5 @@ const Signin = () => {
 };
 
 export default Signin;
+
 

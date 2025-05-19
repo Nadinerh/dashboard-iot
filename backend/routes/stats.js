@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Donnee = require('../models/Donnee');
+const Stat = require('../models/Stat');
 const bodyParser = require('body-parser');
 
-// Middleware pour parser les requêtes JSON
+// Middleware pour parser les requêtes
 router.use(bodyParser.json());
-
-// Middleware pour parser les requêtes avec des données encodées en URL
 router.use(bodyParser.urlencoded({ extended: true }));
 
+// 📊 Route 1 : trafic capteurs (par heure)
 router.get('/hourly', async (req, res) => {
   try {
     const results = await Donnee.aggregate([
@@ -20,12 +20,9 @@ router.get('/hourly', async (req, res) => {
           count: { $sum: 1 }
         }
       },
-      {
-        $sort: { "_id": 1 }
-      }
+      { $sort: { "_id": 1 } }
     ]);
 
-    // Reformater pour le frontend
     const formatted = results.map(entry => ({
       hour: `${entry._id}:00`,
       traffic: entry.count
@@ -37,4 +34,15 @@ router.get('/hourly', async (req, res) => {
   }
 });
 
+// 🚨 Route 2 : attaques détectées (DDoS)
+router.get('/attacks', async (req, res) => {
+  try {
+    const attaques = await Stat.find({ type: "DDoS" }).sort({ timestamp: -1 }).limit(50);
+    res.json(attaques);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
+

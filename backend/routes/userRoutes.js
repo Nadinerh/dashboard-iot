@@ -3,9 +3,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const authenticateToken = require('../middleware/authenticateToken');
-const router = express.Router();
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+
+const router = express.Router();
 
 // Login route
 router.post('/login', async (req, res) => {
@@ -32,11 +33,8 @@ router.post('/login', async (req, res) => {
 // Register route
 router.post('/register', async (req, res) => {
   const { email, password, cle } = req.body;
-
-  // 🔒 Clé secrète définie dans .env ou codée ici (ex: "abc123")
-  const CLE_ATTENDUE = process.env.CLE_SECRETE || "s1e2c3r4e5t";
-
-  if (cle !== CLE_ATTENDUE) {
+  
+  if (cle !== process.env.CLE_SECRETE) {
     return res.status(403).json({ message: "Clé d'inscription invalide" });
   }
 
@@ -47,11 +45,11 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword });
+    const newUser = new User({ email, password: hashedPassword }); // Fixed: Ensure `new` keyword is used
     await newUser.save();
     res.status(201).json({ message: "saved", success: true });
   } catch (error) {
-    console.error("Error during registration:", error);
+    console.error("Error during registration:", error); // Log the error for debugging
     res.status(500).json({ message: "Erreur serveur", error: error.message });
   }
 });
@@ -111,66 +109,77 @@ router.delete('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-
+// Route de réinitialisation du mot de passe
 router.post('/forgot-password', async (req, res) => {
-  const { email } = req.body;
   try {
-    const user = await User.findOne({ email: email.trim().toLowerCase() });
-    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
 
-    const token = crypto.randomBytes(32).toString("hex");
-    user.resetToken = token;
-    user.resetTokenExpiration = Date.now() + 3600000;
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    user.resetToken = resetToken;
+    user.resetTokenExpiration = Date.now() + 3600000; // 1 heure
     await user.save();
 
-    const resetLink = `http://localhost:3000/reset-password/${token}`;
-    console.log("🔗 Lien de réinitialisation :", resetLink);
-
+    // Configurer l'envoi d'email
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: process.env.EMAIL_PASS
       }
     });
 
     await transporter.sendMail({
       to: user.email,
-      subject: "Réinitialisation de mot de passe",
-      html: `<p>Clique ici pour changer ton mot de passe :</p><a href="${resetLink}">${resetLink}</a>`
+      subject: 'Réinitialisation du mot de passe',
+      html: `
+        <p>Vous avez demandé une réinitialisation de mot de passe</p>
+        <p>Cliquez sur ce lien pour réinitialiser: 
+        <a href="${process.env.FRONTEND_URL}/reset-password/${resetToken}">
+          Réinitialiser le mot de passe
+        </a></p>
+      `
     });
 
-    res.status(200).json({ message: "Email envoyé." });
-  } catch (err) {
-    res.status(500).json({ message: "Erreur serveur", error: err.message });
+    res.json({ message: 'Email envoyé' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
-router.post("/reset-password/:token", async (req, res) => {
-  const { token } = req.params;
-  const { password, cle } = req.body;
 
-  const CLE_ATTENDUE = process.env.CLE_SECRETE || "s1e2c3r4e5t";
-  if (cle !== CLE_ATTENDUE) {
-    return res.status(403).json({ message: "Clé secrète invalide" });
-  }
-
+// Route de reset password
+router.post('/reset-password/:token', async (req, res) => {
   try {
     const user = await User.findOne({
-      resetToken: token,
+      resetToken: req.params.token,
       resetTokenExpiration: { $gt: Date.now() }
     });
 
-    if (!user) return res.status(400).json({ message: "Lien invalide ou expiré" });
+    if (!user) {
+      return res.status(400).json({ message: 'Token invalide ou expiré' });
+    }
 
-    user.password = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    user.password = hashedPassword;
     user.resetToken = undefined;
     user.resetTokenExpiration = undefined;
     await user.save();
 
-    res.status(200).json({ message: "Mot de passe mis à jour" });
-  } catch (err) {
-    res.status(500).json({ message: "Erreur serveur", error: err.message });
+    res.json({ message: 'Mot de passe mis à jour' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
+router.get('/history', async (req, res) => {
+  try {
+    const results = await Detection.find().sort({ _id: -1 }).limit(20);
+    res.json(results.reverse()); // plus récents en dernier
+  } catch (err) {
+    res.status(500).json({ error: 'Erreur récupération historique IA' });
+  }
+});
+
 
 module.exports = router;

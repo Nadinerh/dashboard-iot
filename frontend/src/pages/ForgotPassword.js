@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./Login.css"; // ← on réutilise le style Login.css
+import "./Login.css";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -11,9 +11,9 @@ const ForgotPassword = () => {
       await axios.post(`${process.env.REACT_APP_BACKEND_IP}/api/users/forgot-password`, {
         email: email.trim().toLowerCase(),
       });
-      setMessage("📧 Lien envoyé à ton email !");
+      setMessage("Lien envoyé à ton email !");
     } catch (err) {
-      setMessage("❌ Utilisateur non trouvé");
+      setMessage("Utilisateur non trouvé");
     }
   };
 

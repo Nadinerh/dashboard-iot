@@ -10,7 +10,7 @@ router.use(bodyParser.json());
 // Middleware pour parser les requêtes avec des données encodées en URL
 router.use(bodyParser.urlencoded({ extended: true }));
 
-// 🔒 GET /api/donnees → Récupère les 10 dernières données
+// GET /api/donnees → Récupère les 10 dernières données
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const data = await Donnee.find().sort({ date: -1 }).limit(10);
@@ -23,12 +23,12 @@ router.get('/', authenticateToken, async (req, res) => {
 // Route pour générer des données de test
 router.post('/generate-test-data', async (req, res) => {
   try {
-    const numberOfPoints = 50; // Nombre de points de données à générer
+    const numberOfPoints = 50; 
     const testData = [];
     
     for (let i = 0; i < numberOfPoints; i++) {
-      const temp = (20 + Math.random() * 10).toFixed(1); // Température entre 20 et 30°C
-      const hum = (50 + Math.random() * 30).toFixed(1);  // Humidité entre 50 et 80%
+      const temp = (20 + Math.random() * 10).toFixed(1); 
+      const hum = (50 + Math.random() * 30).toFixed(1); 
       
       const donnee = new Donnee({
         temp: parseFloat(temp),

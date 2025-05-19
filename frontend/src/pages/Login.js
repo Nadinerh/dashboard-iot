@@ -16,7 +16,7 @@ const Login = () => {
         email,
         password
       });
-      localStorage.setItem("token", response.data.token); // ✅ Utilisation de la réponse
+      localStorage.setItem("token", response.data.token);
       navigate("/dashboard");
     } catch (err) {
       console.error("Erreur de connexion :", err);

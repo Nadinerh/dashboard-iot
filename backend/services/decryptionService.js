@@ -1,4 +1,3 @@
-// ✅ Nouveau decryptionService.js — dérivation de la clé compatible Raspberry
 const crypto = require('crypto');
 const { promisify } = require('util');
 const pbkdf2 = promisify(crypto.pbkdf2);
@@ -16,7 +15,7 @@ const decryptData = async (encryptedBuffer) => {
   let decrypted = decipher.update(ciphertext);
   decrypted = Buffer.concat([decrypted, decipher.final()]);
 
-  return decrypted; // ← NE PAS .toString('utf8'), laisser le format brut au contrôleur upload.js
+  return decrypted; 
 };
 
 module.exports = { decryptData };
